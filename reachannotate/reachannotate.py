@@ -63,32 +63,49 @@ root.title("Tkinter media")
 load_btn = tk.Button(root, text="Load", command=load_video)
 load_btn.pack()
 
+# define video player
 vid_player = ReachAnnotation(scaled=True, master=root)
 vid_player.pack(expand=True, fill="both")
 
+# Add button for playing/pausing video
 play_pause_btn = tk.Button(root, text="Play", command=play_pause)
 play_pause_btn.pack()
 
+# Add button for skipping +- 5 frame intervals
 skip_plus_5sec = tk.Button(root, text="Skip -5 sec", command=lambda: skip(-5))
 skip_plus_5sec.pack(side="left")
 
+# add button for time
 start_time = tk.Label(root, text=str(datetime.timedelta(seconds=0)))
 start_time.pack(side="left")
 
+# add slider value to indicate where exactly we are at in video.
 progress_value = tk.IntVar(root)
-
 progress_slider = tk.Scale(root, variable=progress_value, from_=0, to=0, orient="horizontal", command=seek)
 # progress_slider.bind("<ButtonRelease-1>", seek)
 progress_slider.pack(side="left", fill="x", expand=True)
-
+# Display end times at end of slider.
 end_time = tk.Label(root, text=str(datetime.timedelta(seconds=0)))
 end_time.pack(side="left")
 
 vid_player.bind("<<Duration>>", update_duration)
 vid_player.bind("<<SecondChanged>>", update_scale)
-vid_player.bind("<<Ended>>", video_ended )
+vid_player.bind("<<Ended>>", video_ended)
 
 skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
 skip_plus_5sec.pack(side="left")
+
+# add method for obtaining .txt file paths for start/stop times, classification
+
+# add method for displaying both outputs in right side
+
+# add method for editing ouputs in right side
+
+# add method for saving outputs in right side
+
+# add method for selecting behavior w/ mouse input
+
+# add method for selection to "seek" frame selected
+
 
 root.mainloop()
