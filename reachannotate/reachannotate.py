@@ -1,3 +1,6 @@
+""" GUI for use with ReachMaster/ReachProcess data, code repurposed from https://github.com/PaulleDemon/tkVideoPlayer
+    Code below written by Nicholas Chin, Brett Nelson. MIT LICENSE
+    """
 import datetime
 import tkinter as tk
 from tkinter import filedialog

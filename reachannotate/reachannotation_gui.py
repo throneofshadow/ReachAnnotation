@@ -1,3 +1,4 @@
+""" Credit for code below: https://github.com/PaulleDemon/tkVideoPlayer """
 import av
 import time
 import threading
