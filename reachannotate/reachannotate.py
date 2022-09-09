@@ -2,8 +2,13 @@
     Code below written by Nicholas Chin, Brett Nelson. MIT LICENSE
     """
 import datetime
+import pdb
 import tkinter as tk
 from tkinter import filedialog
+from tkinter import *
+from tkinter import ttk
+import glob
+import pandas as pd
 from reachannotation_gui import ReachAnnotation
 
 
@@ -21,8 +26,19 @@ def update_scale(event):
 
 def load_video():
     """ loads the video """
+    file_id = 'trial_times.csv'
     file_path = filedialog.askopenfilename()
-
+    # search for a .csv file inside of directory, automatic load
+    csv_file = 'trial_times.csv'
+    for name in glob.glob(file_path):  # To-Do
+        if file_id in name:
+            csv_file = name
+    csv_data = pd.read_csv(csv_file)
+    for index, data in csv_data.iterrows():
+        tree.insert('', 'end', text='1', values=(str(data[0]), str(data[1]), str(data[2]),
+                                                 str(data[3]), str(data[4]), str(data[5]), str(data[6])))
+    tree.pack(side='left')
+    #for
     if file_path:
         vid_player.load(file_path)
 
@@ -98,9 +114,24 @@ vid_player.bind("<<Ended>>", video_ended)
 skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
 skip_plus_5sec.pack(side="left")
 
-# add method for obtaining .txt file paths for start/stop times, classification
 
-# add method for displaying both outputs in right side
+tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7"), show='headings', height=5)
+
+tree.column("# 1", anchor=CENTER,  width=70)
+tree.heading("# 1", text="Trial Number")
+tree.column("# 2", anchor=CENTER,  width=70)
+tree.heading("# 2", text="Start Time")
+tree.column("# 3", anchor=CENTER, stretch=NO, width=70)
+tree.heading("# 3", text="Stop Time")
+tree.column("# 4", anchor=CENTER, stretch=NO, width=70)
+tree.heading("# 4", text="Trial?")
+tree.column("# 5", anchor=CENTER, stretch=NO, width=70)
+tree.heading("# 5", text="Num Reaches")
+tree.column("# 6", anchor=CENTER, stretch=NO, width=70)
+tree.heading("# 6", text="Handedness")
+tree.column("# 7", anchor=CENTER, stretch=NO, width=70)
+tree.heading("# 7", text="Tug of War")
+
 
 # add method for editing ouputs in right side
 

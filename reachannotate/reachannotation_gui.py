@@ -278,3 +278,28 @@ class ReachAnnotation(tk.Label):
 
         self._seek = True
         self._seek_sec = sec
+
+    # def seek_to_video(self, sec:int, start_frame):
+        # self.seek=True
+        # self._seek_sec = start_frame
+
+    # def create_dropdown(self...)
+        # do stuff to ex
+        # OS MENU (filepath)
+        # tkinter.dropdown fileselect -> path_object
+        # Take path object -> display contents
+
+    # def create_list_window(self..)
+        # display contents of .csv file found in dropdown
+
+    # def action_dropdown(self, window):
+        # if self.window_action:
+        # do stuff aka select trial
+
+    # def load_dropdown(self...)
+
+    # dropdown or list : .csv file containing trial start/stop
+    # 1 543 900
+    # Brett: Make individual trial videos,
+    # Make entire session videos, skip from trial to trial
+    # Select trial from dropdown, it automatically seeks to that timeframe
