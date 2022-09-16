@@ -36,7 +36,7 @@ def load_video():
     csv_data = pd.read_csv(csv_file)
     for index, data in csv_data.iterrows():
         tree.insert('', 'end', text='1', values=(str(data[0]), str(data[1]), str(data[2]),
-                                                 str(data[3]), str(data[4]), str(data[5]), str(data[6])))
+                                                 str(data[3]), str(data[4]), str(data[5]), str(data[6]), str(data[7])))
     tree.pack(side='left')
     #for
     if file_path:
@@ -115,24 +115,30 @@ skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
 skip_plus_5sec.pack(side="left")
 
 
-tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7"), show='headings', height=5)
+tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=5)
 
 tree.column("# 1", anchor=CENTER,  width=70)
 tree.heading("# 1", text="Trial Number")
 tree.column("# 2", anchor=CENTER,  width=70)
 tree.heading("# 2", text="Start Time")
 tree.column("# 3", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 3", text="Stop Time")
+tree.heading("# 3", text="Trial?")
 tree.column("# 4", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 4", text="Trial?")
+tree.heading("# 4", text="Num Reaches")
 tree.column("# 5", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 5", text="Num Reaches")
+tree.heading("# 5", text="Reaching Start Times")
 tree.column("# 6", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 6", text="Handedness")
+tree.heading("# 6", text="Reaching Stop Times")
 tree.column("# 7", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 7", text="Tug of War")
+tree.heading("# 7 ", text="Handedness")
+tree.column("# 8", anchor=CENTER, stretch=NO, width=70)
+tree.heading("# 8", text="Tug of War")
 
-
+treeScroll = ttk.Scrollbar(root)
+treeScroll.configure(command=tree.yview)
+tree.configure(yscrollcommand=treeScroll.set)
+treeScroll.pack(side= RIGHT, fill= BOTH)
+tree.pack()
 # add method for editing ouputs in right side
 
 # add method for saving outputs in right side
