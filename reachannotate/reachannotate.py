@@ -78,19 +78,18 @@ def editItem():
                 x = input('Please enter new value for number of reaches')
                 tree.item(curItem)[index] = str(x)
             if index == 4:
-                x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
+                x = input('Please enter new value for reach start time(s)')
                 tree.item(curItem)[index] = str(x)
             if index == 5:
-                x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
+                x = input('Please enter new value for reach stop time(s)')
                 tree.item(curItem)[index] = str(x)
             if index == 6:
-                x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
+                x = input('Please enter new value for handedness of reach')
                 tree.item(curItem)[index] = str(x)
             if index == 7:
-                x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
+                x = input('Please enter new value for tug of war (0 none in trial)')
                 tree.item(curItem)[index] = str(x)
     VL.edit_csv_file(curItem)
-            # input
     return
 
 
@@ -149,6 +148,7 @@ class VideoLoader:
             self.csv_data[index, :] = values
         self.csv_data.to_csv(self.csv_address,index=False)
         return
+
 
 VL = VideoLoader()
 
