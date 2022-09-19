@@ -102,7 +102,8 @@ def pack_tree_with_csv(csv_data):
     tree.pack(side='left')
 
 
-def load_video(file_path):
+def load_video():
+    file_path = filedialog.askopenfilename()
     vid_player.load(file_path)
     progress_slider.config(to=0, from_=0)
     play_pause_btn["text"] = "Play"
@@ -118,7 +119,6 @@ class VideoLoader:
 
     def load_video(self, windows=False):
         """ loads the video """
-        file_path = filedialog.askopenfilename()
         if windows:
             file_ids = str.rsplit(file_path, '//')
         else:
@@ -149,6 +149,8 @@ class VideoLoader:
             self.csv_data[index, :] = values
         self.csv_data.to_csv(self.csv_address,index=False)
         return
+
+
 
 VL = VideoLoader()
 
@@ -217,8 +219,8 @@ vid_player.bind("<<Ended>>", video_ended)
 skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
 skip_plus_5sec.pack(side="left")
 
-
-load_btn = tk.Button(root, text="Load", command=VL.load_video(windows=False))
+#Load Video Button
+load_btn = tk.Button(root, text="Load", command=load_video)
 load_btn.pack(side='left')
 
 update_button = tk.Button(root, text="Update Record", command=editItem)
