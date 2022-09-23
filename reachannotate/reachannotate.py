@@ -53,10 +53,55 @@ def video_ended(event):
     progress_slider.set(0)
 
 
-def selectItem(a):
-    curItem = tree.focus()  # current row selection in tree
-    trial_time = int(float(tree.item(curItem)['values'][1]))  # gets first value from dictionary of row values
-    seek_trial_value(trial_time)  # seeks to start frame in behavior.
+def selectItem(a, event):
+    rowid = tree.identify_row(event.y)
+    column = tree.identify_column(event.x)
+    if column == 1:
+        curItem = tree.focus()  # current row selection in tree
+        trial_time = int(float(tree.item(curItem)['values'][1]))  # gets first value from dictionary of row values
+        seek_trial_value(trial_time)  # seeks to start frame in behavior.
+    else:
+        x, y, width, height = tree.bbox(rowid, column)
+
+        # y-axis offset
+        # pady = height // 2
+        pady = 0
+
+        # place Entry popup properly
+        text = tree.item(rowid, 'text')
+        entryPopup = EntryPopup(tree, rowid, text)
+        entryPopup.place(x=0, y=y + pady, anchor=W, relwidth=1)
+
+
+class EntryPopup(Entry):
+
+    def __init__(self, parent, iid, text, **kw):
+        ''' If relwidth is set, then width is ignored '''
+        super().__init__(parent, **kw)
+        self.tv = parent
+        self.iid = iid
+
+        self.insert(0, text)
+        # self['state'] = 'readonly'
+        # self['readonlybackground'] = 'white'
+        # self['selectbackground'] = '#1BA1E2'
+        self['exportselection'] = False
+
+        self.focus_force()
+        self.bind("<Return>", self.on_return)
+        self.bind("<Control-a>", self.select_all)
+        self.bind("<Escape>", lambda *ignore: self.destroy())
+
+    def on_return(self, event):
+        self.tv.item(self.iid, text=self.get())
+        self.destroy()
+
+    def select_all(self, *ignore):
+        ''' Set selection on the whole text '''
+        self.selection_range(0, 'end')
+
+        # returns 'break' to interrupt default key-bindings
+        return 'break'
 
 
 def seek_trial_value(trial_val):
@@ -108,6 +153,10 @@ def load_video():
     play_pause_btn["text"] = "Play"
     progress_value.set(0)
 
+
+# Button to load in csv file from path, button for saving csv file, can assume file exists already ie. filedialog
+
+
 class VideoLoader:
 
     def __init__(self):
@@ -118,10 +167,11 @@ class VideoLoader:
 
     def load_video(self, windows=False):
         """ loads the video """
+        self.file_path = filedialog.askopenfilename()
         if windows:
-            file_ids = str.rsplit(file_path, '//')
+            file_ids = str.rsplit(self.file_path, '//')
         else:
-            file_ids = str.rsplit(file_path,'/')
+            file_ids = str.rsplit(self.file_path, '/')
         file_n = file_ids[0:-1]
         for i, f in enumerate(file_n):
             if i == 0:
@@ -134,8 +184,11 @@ class VideoLoader:
         self.csv_data = pd.read_csv(self.csv_address)
         pack_tree_with_csv(self.csv_data)
         # for
-        if file_path:
-            load_video(file_path)
+        if self.file_path:
+            vid_player.load(self.file_path)
+            progress_slider.config(to=0, from_=0)
+            play_pause_btn["text"] = "Play"
+            progress_value.set(0)
 
     def edit_csv_file(self, curItem):
         """ Function to edit and save edits in populated csv file. """
@@ -184,7 +237,7 @@ tree.pack()
 
 
 tree.bind('<ButtonRelease-1>', selectItem)
-tree.bind('<ButtonRelease-2>', editItem)
+#tree.bind('<ButtonRelease-2>', editItem)
 
 vid_player = ReachAnnotation(scaled=True, master=root)
 vid_player.pack(expand=True, fill="both")
@@ -218,7 +271,7 @@ skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
 skip_plus_5sec.pack(side="left")
 
 #Load Video Button
-load_btn = tk.Button(root, text="Load", command=load_video)
+load_btn = tk.Button(root, text="Load", command=VL.load_video)
 load_btn.pack(side='left')
 
 update_button = tk.Button(root, text="Update Record", command=editItem)
