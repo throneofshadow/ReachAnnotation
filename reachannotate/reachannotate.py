@@ -45,98 +45,41 @@ def play_pause():
         vid_player.pause()
         play_pause_btn["text"] = "Play"
 
-
 def video_ended(event):
     """ handle video ended """
     progress_slider.set(progress_slider["to"])
     play_pause_btn["text"] = "Play"
     progress_slider.set(0)
 
-
 def selectItem(event):
     rowid = tree.identify_row(event.y)
     column = tree.identify_column(event.x)
+    curItem = tree.focus()
     if column == 1:
-        curItem = tree.focus()  # current row selection in tree
+        # current row selection in tree
         trial_time = int(float(tree.item(curItem)['values'][1]))  # gets first value from dictionary of row values
         seek_trial_value(trial_time)  # seeks to start frame in behavior.
-    else:
-        x, y, width, height = tree.bbox(rowid, column)
-
-        # y-axis offset
-        # pady = height // 2
-        pady = 0
-
-        # place Entry popup properly
-        text = tree.item(rowid, 'text')
-        entryPopup = EntryPopup(tree, rowid, text)
-        entryPopup.place(x=0, y=y + pady, anchor=W, relwidth=1)
-
-
-class EntryPopup(Entry):
-
-    def __init__(self, parent, iid, text, **kw):
-        ''' If relwidth is set, then width is ignored '''
-        super().__init__(parent, **kw)
-        self.tv = parent
-        self.iid = iid
-
-        self.insert(0, text)
-        # self['state'] = 'readonly'
-        # self['readonlybackground'] = 'white'
-        # self['selectbackground'] = '#1BA1E2'
-        self['exportselection'] = False
-
-        self.focus_force()
-        self.bind("<Return>", self.on_return)
-        self.bind("<Control-a>", self.select_all)
-        self.bind("<Escape>", lambda *ignore: self.destroy())
-
-    def on_return(self, event):
-        self.tv.item(self.iid, text=self.get())
-        # add save here
-        self.destroy()
-
-    def select_all(self, *ignore):
-        ''' Set selection on the whole text '''
-        self.selection_range(0, 'end')
-
-        # returns 'break' to interrupt default key-bindings
-        return 'break'
-
+    elif column == "#2":
+        x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
+        tree.set(curItem, '#2', str(x))
+    elif column == "#3":
+        x = input('Please enter new value for number of reaches')
+        tree.set(curItem, '#3', str(x))
+    elif column == "#4":
+        x = input('Please enter new value for reach start time(s)')
+        tree.set(curItem, '#4', str(x))
+    elif column == "#5":
+        x = input('Please enter new value for reach stop time(s)')
+        tree.set(curItem, '#5', str(x))
+    elif column == "#6":
+        x = input('Please enter new value for handedness of reach')
+        tree.set(curItem, '#6', str(x))
+    elif column == "#7":
+        x = input('Please enter new value for tug of war (0 none in trial)')
+        tree.set(curItem, '#7', str(x))
 
 def seek_trial_value(trial_val):
     seek(trial_val)
-
-
-def editItem():
-    curItem = tree.focus() # finds trial row
-    for index, items in enumerate(tree.item(curItem)['values']):  # iterate over list of values
-        if index < 2:
-            pass
-        else:  # this is where we need help
-            # Input new, NA
-            if index == 2:
-                x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
-                tree.set(curItem, '#3', str(x))
-                #tree.item(curItem)[index] = str(x)
-            if index == 3:
-                x = input('Please enter new value for number of reaches')
-                tree.item(curItem)[index] = str(x)
-            if index == 4:
-                x = input('Please enter new value for reach start time(s)')
-                tree.item(curItem)[index] = str(x)
-            if index == 5:
-                x = input('Please enter new value for reach stop time(s)')
-                tree.item(curItem)[index] = str(x)
-            if index == 6:
-                x = input('Please enter new value for handedness of reach')
-                tree.item(curItem)[index] = str(x)
-            if index == 7:
-                x = input('Please enter new value for tug of war (0 none in trial)')
-                tree.item(curItem)[index] = str(x)
-    return
-
 
 def pack_tree_with_csv(csv_data):
     for index, data in csv_data.iterrows():
@@ -161,7 +104,7 @@ def load_trial_data():
 
 
 def save_edits_trial_data():
-    save_address = tk.filedialog.askopenfile()
+    save_address = tk.filedialog.askopenfilename()
     row_list = []
     columns = ['Trial', 'Start Time', 'Trial?', 'Number Reaches', 'Reach Start Time', 'Reach Stop Time',
                 'Handedness', 'Tug of War']
@@ -244,7 +187,7 @@ skip_plus_5sec.pack(side="left")
 load_btn = tk.Button(root, text="Load", command=load_video)
 load_btn.pack(side='left')
 
-load_csv_btn = tk.Button(root, text="Load", command=load_trial_data)
+load_csv_btn = tk.Button(root, text="Load CSV", command=load_trial_data)
 load_csv_btn.pack(side='left')
 
 update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data)
