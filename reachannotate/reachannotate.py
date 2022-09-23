@@ -45,41 +45,45 @@ def play_pause():
         vid_player.pause()
         play_pause_btn["text"] = "Play"
 
+
 def video_ended(event):
     """ handle video ended """
     progress_slider.set(progress_slider["to"])
     play_pause_btn["text"] = "Play"
     progress_slider.set(0)
 
+
 def selectItem(event):
     rowid = tree.identify_row(event.y)
     column = tree.identify_column(event.x)
     curItem = tree.focus()
-    if column == 1:
+    if column == "#2":
         # current row selection in tree
         trial_time = int(float(tree.item(curItem)['values'][1]))  # gets first value from dictionary of row values
         seek_trial_value(trial_time)  # seeks to start frame in behavior.
-    elif column == "#2":
-        x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
-        tree.set(curItem, '#2', str(x))
     elif column == "#3":
-        x = input('Please enter new value for number of reaches')
+        x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
         tree.set(curItem, '#3', str(x))
     elif column == "#4":
-        x = input('Please enter new value for reach start time(s)')
+        x = input('Please enter new value for number of reaches')
         tree.set(curItem, '#4', str(x))
     elif column == "#5":
-        x = input('Please enter new value for reach stop time(s)')
+        x = input('Please enter new value for reach start time(s)')
         tree.set(curItem, '#5', str(x))
     elif column == "#6":
-        x = input('Please enter new value for handedness of reach')
+        x = input('Please enter new value for reach stop time(s)')
         tree.set(curItem, '#6', str(x))
     elif column == "#7":
-        x = input('Please enter new value for tug of war (0 none in trial)')
+        x = input('Please enter new value for handedness of reach')
         tree.set(curItem, '#7', str(x))
+    elif column == "#8":
+        x = input('Please enter new value for tug of war (0 none in trial)')
+        tree.set(curItem, '#8', str(x))
+
 
 def seek_trial_value(trial_val):
     seek(trial_val)
+
 
 def pack_tree_with_csv(csv_data):
     for index, data in csv_data.iterrows():
@@ -187,7 +191,7 @@ skip_plus_5sec.pack(side="left")
 load_btn = tk.Button(root, text="Load", command=load_video)
 load_btn.pack(side='left')
 
-load_csv_btn = tk.Button(root, text="Load CSV", command=load_trial_data)
+load_csv_btn = tk.Button(root, text="Load", command=load_trial_data)
 load_csv_btn.pack(side='left')
 
 update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data)

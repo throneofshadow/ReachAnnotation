@@ -39,7 +39,7 @@ class ReachAnnotation(tk.Label):
         self._seek_sec = 0
 
         self._video_info = {
-            "duration": 0,  # duration of the video
+            "duration": 0,  # duration of the video, in total frames
             "framerate": 0,  # frame rate of the video
             "framesize": (0, 0)  # tuple containing frame height and width of the video
 
@@ -115,14 +115,16 @@ class ReachAnnotation(tk.Label):
             stream = self._container.streams.video[0]
 
             try:
-                self._video_info["framerate"] = int(stream.average_rate)
+                self._video_info["framerate"] = 30
 
             except TypeError:
                 raise TypeError("Not a video file")
 
             try:
+                self.num_frames = stream.frames
+                #self._video_info["duration"] = float(stream.duration * stream.time_base)
+                self._video_info["duration"] = float(stream.frames)
 
-                self._video_info["duration"] = float(stream.duration * stream.time_base)
                 self.event_generate("<<Duration>>")  # duration has been found
 
             except (TypeError, tk.TclError):  # the video duration cannot be found, this can happen for mkv files
@@ -147,10 +149,12 @@ class ReachAnnotation(tk.Label):
 
             while self._load_thread == current_thread and not self._stop:
                 if self._seek:  # seek to specific second
-                    self._container.seek(self._seek_sec * 1000000, whence='time', backward=True,
+                    seek_time = int((self._seek_sec / self._video_info['framerate']) * 1000000)
+                    self._container.seek(seek_time, whence='time',
+                                         backward=True,
                                          any_frame=False)  # the seek time is given in av.time_base, the multiplication is to correct the frame
                     self._seek = False
-                    self._frame_number = self._video_info["framerate"] * self._seek_sec
+                    self._frame_number = self._seek_sec
 
                     self._seek_sec = 0
 
@@ -166,11 +170,11 @@ class ReachAnnotation(tk.Label):
                 try:
                     frame = next(self._container.decode(video=0))
 
-                    self._time_stamp = float(frame.pts * stream.time_base)
-
                     self._current_img = frame.to_image()
 
                     self._frame_number += 1
+
+                    self._time_stamp = self._frame_number
 
                     self.event_generate("<<FrameGenerated>>")
 
@@ -242,7 +246,7 @@ class ReachAnnotation(tk.Label):
 
     def current_duration(self) -> float:
         """ returns current playing duration in sec """
-        return self._time_stamp
+        return self._frame_number
 
     def current_img(self) -> Image:
         """ returns current frame image """
@@ -273,11 +277,11 @@ class ReachAnnotation(tk.Label):
         self.current_imgtk = ImageTk.PhotoImage(self._current_img)
         self.config(image=self.current_imgtk)
 
-    def seek(self, sec: int):
+    def seek(self, frame: int):
         """ seeks to specific time"""
 
         self._seek = True
-        self._seek_sec = sec
+        self._seek_sec = frame
 
     # def seek_to_video(self, sec:int, start_frame):
         # self.seek=True
