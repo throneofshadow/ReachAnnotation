@@ -53,7 +53,7 @@ def video_ended(event):
     progress_slider.set(0)
 
 
-def selectItem(a, event):
+def selectItem(event):
     rowid = tree.identify_row(event.y)
     column = tree.identify_column(event.x)
     if column == 1:
@@ -164,7 +164,7 @@ def save_edits_trial_data():
     save_address = tk.filedialog.askopenfile()
     row_list = []
     columns = ['Trial', 'Start Time', 'Trial?', 'Number Reaches', 'Reach Start Time', 'Reach Stop Time',
-          'Handedness', 'Tug of War']
+                'Handedness', 'Tug of War']
     for row in tree.get_children():
         row_list.append(tree.item(row)["values"])
     treeview_df = pd.DataFrame(row_list, columns=columns)
