@@ -94,6 +94,7 @@ class EntryPopup(Entry):
 
     def on_return(self, event):
         self.tv.item(self.iid, text=self.get())
+        # add save here
         self.destroy()
 
     def select_all(self, *ignore):
@@ -134,7 +135,6 @@ def editItem():
             if index == 7:
                 x = input('Please enter new value for tug of war (0 none in trial)')
                 tree.item(curItem)[index] = str(x)
-    VL.edit_csv_file(curItem)
     return
 
 
@@ -154,56 +154,26 @@ def load_video():
     progress_value.set(0)
 
 
+def load_trial_data():
+    csv_address = filedialog.askopenfilename()
+    csv_data = pd.read_csv(csv_address)
+    pack_tree_with_csv(csv_data)
+
+
+def save_edits_trial_data():
+    save_address = tk.filedialog.askopenfile()
+    row_list = []
+    columns = ['Trial', 'Start Time', 'Trial?', 'Number Reaches', 'Reach Start Time', 'Reach Stop Time',
+          'Handedness', 'Tug of War']
+    for row in tree.get_children():
+        row_list.append(tree.item(row)["values"])
+    treeview_df = pd.DataFrame(row_list, columns=columns)
+    treeview_df.to_csv(save_address, index=False)
+
+
 # Button to load in csv file from path, button for saving csv file, can assume file exists already ie. filedialog
 
 
-class VideoLoader:
-
-    def __init__(self):
-        self.video_address = None
-        self.file_path = None
-        self.csv_address = 'trial_times.csv'
-        self.csv_data = None
-
-    def load_video(self, windows=False):
-        """ loads the video """
-        self.file_path = filedialog.askopenfilename()
-        if windows:
-            file_ids = str.rsplit(self.file_path, '//')
-        else:
-            file_ids = str.rsplit(self.file_path, '/')
-        file_n = file_ids[0:-1]
-        for i, f in enumerate(file_n):
-            if i == 0:
-                self.file_path = f
-            else:
-                self.file_path += '/'
-                self.file_path += f
-        # search for a .csv file inside of directory, automatic load
-        self.csv_address = self.file_path + '/trial_times.csv'
-        self.csv_data = pd.read_csv(self.csv_address)
-        pack_tree_with_csv(self.csv_data)
-        # for
-        if self.file_path:
-            vid_player.load(self.file_path)
-            progress_slider.config(to=0, from_=0)
-            play_pause_btn["text"] = "Play"
-            progress_value.set(0)
-
-    def edit_csv_file(self, curItem):
-        """ Function to edit and save edits in populated csv file. """
-        values = tree.item(curItem)['values']
-        index = values[0]  # index of dataframe to save
-        if self.csv_data:
-            self.csv_data[index, :] = values
-        else:
-            self.csv_data = pd.read_csv(self.csv_address)
-            self.csv_data[index, :] = values
-        self.csv_data.to_csv(self.csv_address,index=False)
-        return
-
-
-VL = VideoLoader()
 
 root = tk.Tk()
 root.title("Tkinter media")
@@ -271,10 +241,13 @@ skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
 skip_plus_5sec.pack(side="left")
 
 #Load Video Button
-load_btn = tk.Button(root, text="Load", command=VL.load_video)
+load_btn = tk.Button(root, text="Load", command=load_video)
 load_btn.pack(side='left')
 
-update_button = tk.Button(root, text="Update Record", command=editItem)
+load_csv_btn = tk.Button(root, text="Load", command=load_trial_data)
+load_csv_btn.pack(side='left')
+
+update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data)
 update_button.pack()
 
 # define video player
