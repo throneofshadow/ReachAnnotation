@@ -135,7 +135,7 @@ def load_trial_data():
     pack_tree_with_csv(csv_data)
 
 
-def save_edits_trial_data(tree):
+def save_edits_trial_data():
     save_address = tk.filedialog.askopenfilename()
     row_list = []
     columns = ['Trial', 'Start Time', 'Trial?', 'Number Reaches', 'Reach Start Time', 'Reach Stop Time',
@@ -218,7 +218,7 @@ load_btn.pack(side='left')
 load_csv_btn = tk.Button(root, text="Load CSV", command=load_trial_data)
 load_csv_btn.pack(side='left')
 
-update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data(tree))
+update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data())
 update_button.pack()
 
 # define video player
