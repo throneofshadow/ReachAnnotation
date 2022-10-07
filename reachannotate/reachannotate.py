@@ -29,7 +29,7 @@ def seek(value):
 
 def skip(value: int):
     """ skip seconds """
-    vid_player.seek(int(progress_slider.get())+value)
+    vid_player.seek(int(progress_slider.get()) + value)
     progress_value.set(progress_slider.get() + value)
 
 
@@ -43,11 +43,13 @@ def play_pause():
         vid_player.pause()
         play_pause_btn["text"] = "Play"
 
+
 def video_ended(event):
     """ handle video ended """
     progress_slider.set(progress_slider["to"])
     play_pause_btn["text"] = "Play"
     progress_slider.set(0)
+
 
 class TEdit(ttk.Treeview):
     def __init__(self, master, **kw):
@@ -89,7 +91,7 @@ class TEdit(ttk.Treeview):
         entry_edit.bind("<FocusOut>", self.on_focus_out)
         entry_edit.bind("<Return>", self.on_enter_pressed)
 
-        entry_edit.place(x = column_box[0], y = column_box[1], w = column_box[2], h = column_box[3])
+        entry_edit.place(x=column_box[0], y=column_box[1], w=column_box[2], h=column_box[3])
         print(column_box)
 
     def on_enter_pressed(self, event):
@@ -104,14 +106,17 @@ class TEdit(ttk.Treeview):
         else:
             current_values = self.item(selected_id).get("values")
             current_values[column_index] = new_text
-            self.item(selected_id, values = current_values)
+            self.item(selected_id, values=current_values)
 
         event.widget.destroy()
+
     def on_focus_out(self, event):
         event.widget.destroy()
 
+
 def seek_trial_value(trial_val):
     seek(trial_val)
+
 
 def pack_tree_with_csv(csv_data):
     for index, data in csv_data.iterrows():
@@ -139,7 +144,7 @@ def save_edits_trial_data(tree):
     save_address = tk.filedialog.askopenfilename()
     row_list = []
     columns = ['Trial', 'Start Time', 'Trial?', 'Number Reaches', 'Reach Start Time', 'Reach Stop Time',
-                'Handedness', 'Tug of War']
+               'Handedness', 'Tug of War']
     for row in tree.get_children():
         row_list.append(tree.item(row)["values"])
     treeview_df = pd.DataFrame(row_list, columns=columns)
@@ -148,16 +153,14 @@ def save_edits_trial_data(tree):
 
 # Button to load in csv file from path, button for saving csv file, can assume file exists already ie. filedialog
 
-
-
 root = tk.Tk()
 root.title("Tkinter media")
 
 tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=5)
 
-tree.column("# 1", anchor=CENTER,  width=70)
+tree.column("# 1", anchor=CENTER, width=70)
 tree.heading("# 1", text="Trial Number")
-tree.column("# 2", anchor=CENTER,  width=70)
+tree.column("# 2", anchor=CENTER, width=70)
 tree.heading("# 2", text="Start Time")
 tree.column("# 3", anchor=CENTER, stretch=NO, width=70)
 tree.heading("# 3", text="Trial?")
@@ -211,7 +214,7 @@ vid_player.bind("<<Ended>>", video_ended)
 skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
 skip_plus_5sec.pack(side="left")
 
-#Load Video Button
+# Load Video Button
 load_btn = tk.Button(root, text="Load", command=load_video)
 load_btn.pack(side='left')
 
