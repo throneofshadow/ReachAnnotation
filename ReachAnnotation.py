@@ -7,7 +7,7 @@ from tkinter import filedialog
 from tkinter import *
 from tkinter import ttk
 import pandas as pd
-from reachannotate.reachannotation_gui import ReachAnnotation
+from ReachAnnotation.reachannotation_gui import ReachAnnotation
 
 
 def update_duration(event):
