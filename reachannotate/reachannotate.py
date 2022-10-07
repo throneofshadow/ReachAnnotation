@@ -2,12 +2,10 @@
     Code below written by Nicholas Chin, Brett Nelson. MIT LICENSE
     """
 import datetime
-import pdb
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import *
 from tkinter import ttk
-import glob
 import pandas as pd
 from reachannotation_gui import ReachAnnotation
 
@@ -107,7 +105,7 @@ def load_trial_data():
     pack_tree_with_csv(csv_data)
 
 
-def save_edits_trial_data():
+def save_edits_trial_data(tree):
     save_address = tk.filedialog.askopenfilename()
     row_list = []
     columns = ['Trial', 'Start Time', 'Trial?', 'Number Reaches', 'Reach Start Time', 'Reach Stop Time',
@@ -194,7 +192,7 @@ load_btn.pack(side='left')
 load_csv_btn = tk.Button(root, text="Load", command=load_trial_data)
 load_csv_btn.pack(side='left')
 
-update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data)
+update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data(tree))
 update_button.pack()
 
 # define video player

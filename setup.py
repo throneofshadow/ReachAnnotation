@@ -10,7 +10,7 @@ setup(
     author_email='bnelson@lbl.gov',
     license='BSD-3-Clause-LBNL',
     packages=['ReachAnnotation'],
-    install_requires=['pandas','tkinter', 'matplotlib.pyplot', 'unittest',
+    install_requires=['pandas', 'tkinter', 'matplotlib.pyplot', 'unittest',
                       'numpy', 'os', 'pdb', 'ffmpeg'],
     classifiers=[
         'Development Status :: 1 - Planning',

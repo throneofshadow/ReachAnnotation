@@ -6,7 +6,6 @@ import logging
 import tkinter as tk
 from PIL import ImageTk, Image, ImageOps
 from typing import Tuple, Dict
-import pdb
 
 
 logging.getLogger('libav').setLevel(logging.ERROR)  # removes warning: deprecated pixel format used
