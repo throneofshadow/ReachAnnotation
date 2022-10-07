@@ -51,66 +51,32 @@ def video_ended(event):
     play_pause_btn["text"] = "Play"
     progress_slider.set(0)
 
-class TEdit(ttk.Treeview):
-    def __init__(self, master, **kw):
-        super().__init__(master, **kw)
-
-        self.bind("<Double-1>", self.selectItem2)
-
-    def selectItem2(self, event):
-        # Identifies the location of the click
-        region_clicked = self.identify_region(event.x, event.y)
-
-        # Focus find column
-        column = self.identify_column(event.x)
-        # Stratify for column index to find index of selection focus
-        column_index = int(column[1:]) - 1
-
-        # Focus and find selected cell
-        selected_id = self.focus()
-        selected_values = self.item(selected_id)
-        if column == "#0":
-            selected_text = selected_values.get("text")
-        else:
-            selected_text = selected_values.get("values")[column_index]
-
-        # Cell binding box -- find width and size of the box
-        column_box = self.bbox(selected_id, column)
-
-        # Cell binding box -- double click event
-        entry_edit = ttk.Entry(root, width=column_box[2])
-
-        # Recording the column index and item id
-        entry_edit.editing_column_index = column_index
-        entry_edit.editing_item_id = selected_id
-
-        entry_edit.insert(0, selected_text)
-        entry_edit.select_range(0, tk.END)
-
-        entry_edit.focus()
-        entry_edit.bind("<FocusOut>", self.on_focus_out)
-        entry_edit.bind("<Return>", self.on_enter_pressed)
-
-        entry_edit.place(x = column_box[0], y = column_box[1], w = column_box[2], h = column_box[3])
-        print(column_box)
-
-    def on_enter_pressed(self, event):
-        new_text = event.widget.get()
-
-        selected_id = event.widget.editing_item_id
-
-        column_index = event.widget.editing_column_index
-
-        if column_index == -1:
-            return
-        else:
-            current_values = self.item(selected_id).get("values")
-            current_values[column_index] = new_text
-            self.item(selected_id, values = current_values)
-
-        event.widget.destroy()
-    def on_focus_out(self, event):
-        event.widget.destroy()
+def selectItem(event):
+    rowid = tree.identify_row(event.y)
+    column = tree.identify_column(event.x)
+    curItem = tree.focus()
+    if column == 1:
+        # current row selection in tree
+        trial_time = int(float(tree.item(curItem)['values'][1]))  # gets first value from dictionary of row values
+        seek_trial_value(trial_time)  # seeks to start frame in behavior.
+    elif column == "#2":
+        x = input('Please enter new value for Trial Type (0 for no reach, 1 for Reach)')
+        tree.set(curItem, '#2', str(x))
+    elif column == "#3":
+        x = input('Please enter new value for number of reaches')
+        tree.set(curItem, '#3', str(x))
+    elif column == "#4":
+        x = input('Please enter new value for reach start time(s)')
+        tree.set(curItem, '#4', str(x))
+    elif column == "#5":
+        x = input('Please enter new value for reach stop time(s)')
+        tree.set(curItem, '#5', str(x))
+    elif column == "#6":
+        x = input('Please enter new value for handedness of reach')
+        tree.set(curItem, '#6', str(x))
+    elif column == "#7":
+        x = input('Please enter new value for tug of war (0 none in trial)')
+        tree.set(curItem, '#7', str(x))
 
 def seek_trial_value(trial_val):
     seek(trial_val)
@@ -155,7 +121,7 @@ def save_edits_trial_data():
 root = tk.Tk()
 root.title("Tkinter media")
 
-tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=5)
+tree = ttk.Treeview(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=5)
 
 tree.column("# 1", anchor=CENTER,  width=70)
 tree.heading("# 1", text="Trial Number")
@@ -180,8 +146,12 @@ treeScroll.configure(command=tree.yview)
 tree.configure(yscrollcommand=treeScroll.set)
 treeScroll.pack(side=RIGHT, fill=BOTH)
 tree.pack()
-
 # add method for editing ouputs in right side
+
+
+tree.bind('<ButtonRelease-1>', selectItem)
+#tree.bind('<ButtonRelease-2>', editItem)
+
 vid_player = ReachAnnotation(scaled=True, master=root)
 vid_player.pack(expand=True, fill="both")
 
