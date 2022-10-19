@@ -6,6 +6,7 @@ import logging
 import tkinter as tk
 from PIL import ImageTk, Image, ImageOps
 from typing import Tuple, Dict
+import pdb
 
 
 logging.getLogger('libav').setLevel(logging.ERROR)  # removes warning: deprecated pixel format used
@@ -103,7 +104,6 @@ class ReachAnnotation(tk.Label):
         """ load's file from a thread """
 
         current_thread = threading.current_thread()
-
         with av.open(path) as self._container:
 
             self._container.streams.video[0].thread_type = "AUTO"

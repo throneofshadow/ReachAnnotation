@@ -2,6 +2,7 @@
     Code below written by Nicholas Chin, Brett Nelson. MIT LICENSE
     """
 import datetime
+import pdb
 import tkinter as tk
 from tkinter import filedialog
 from tkinter import *
@@ -58,14 +59,10 @@ class TEdit(ttk.Treeview):
         self.bind("<Double-1>", self.selectItem2)
 
     def selectItem2(self, event):
-        # Identifies the location of the click
-        region_clicked = self.identify_region(event.x, event.y)
-
         # Focus find column
         column = self.identify_column(event.x)
         # Stratify for column index to find index of selection focus
         column_index = int(column[1:]) - 1
-
         # Focus and find selected cell
         selected_id = self.focus()
         selected_values = self.item(selected_id)
@@ -73,26 +70,27 @@ class TEdit(ttk.Treeview):
             selected_text = selected_values.get("text")
         else:
             selected_text = selected_values.get("values")[column_index]
+        if column_index >= 2:
+            # Cell binding box -- find width and size of the box
+            column_box = self.bbox(selected_id, column)
 
-        # Cell binding box -- find width and size of the box
-        column_box = self.bbox(selected_id, column)
+            # Cell binding box -- double click event
+            entry_edit = ttk.Entry(root, width=column_box[2])
 
-        # Cell binding box -- double click event
-        entry_edit = ttk.Entry(root, width=column_box[2])
+            # Recording the column index and item id
+            entry_edit.editing_column_index = column_index
+            entry_edit.editing_item_id = selected_id
 
-        # Recording the column index and item id
-        entry_edit.editing_column_index = column_index
-        entry_edit.editing_item_id = selected_id
+            entry_edit.insert(0, selected_text)
+            entry_edit.select_range(0, tk.END)
 
-        entry_edit.insert(0, selected_text)
-        entry_edit.select_range(0, tk.END)
+            entry_edit.focus()
+            entry_edit.bind("<FocusOut>", self.on_focus_out)
+            entry_edit.bind("<Return>", self.on_enter_pressed)
 
-        entry_edit.focus()
-        entry_edit.bind("<FocusOut>", self.on_focus_out)
-        entry_edit.bind("<Return>", self.on_enter_pressed)
-
-        entry_edit.place(x=column_box[0], y=column_box[1], w=column_box[2], h=column_box[3])
-        print(column_box)
+            entry_edit.place(x=column_box[0], y=column_box[1], w=column_box[2], h=column_box[3])
+        elif column_index == 1:
+            seek(int(float(selected_text)))
 
     def on_enter_pressed(self, event):
         new_text = event.widget.get()
@@ -121,9 +119,8 @@ def seek_trial_value(trial_val):
 def pack_tree_with_csv(csv_data):
     for index, data in csv_data.iterrows():
         tree.insert('', 'end', text='1', values=(str(data[0]), str(data[1]), str(data[2]),
-                                                 str(data[3]), str(data[4]), str(data[5]), str(data[6]),
-                                                 str(data[7])))
-    tree.pack(side='left')
+                                                 str(data[3]), str(data[4]), str(data[5]), str(data[6])))
+    tree.pack(side='right')
 
 
 def load_video():
@@ -143,8 +140,7 @@ def load_trial_data():
 def save_edits_trial_data():
     save_address = tk.filedialog.askopenfilename()
     row_list = []
-    columns = ['Trial', 'Start Time', 'Trial?', 'Number Reaches', 'Reach Start Time', 'Reach Stop Time',
-               'Handedness', 'Tug of War']
+    columns = ['Trial', 'Reach Start Time', 'Reach Stop Time', 'Grasp Times', 'Handedness', 'Tug of War', 'Notes']
     for row in tree.get_children():
         row_list.append(tree.item(row)["values"])
     treeview_df = pd.DataFrame(row_list, columns=columns)
@@ -156,25 +152,22 @@ def save_edits_trial_data():
 root = tk.Tk()
 root.title("Tkinter media")
 
-tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=5)
+tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7"), show='headings', height=5)
 
 tree.column("# 1", anchor=CENTER, width=70)
 tree.heading("# 1", text="Trial Number")
-tree.column("# 2", anchor=CENTER, width=70)
-tree.heading("# 2", text="Start Time")
+tree.column("# 2", anchor=CENTER, stretch=NO, width=70)
+tree.heading("# 2", text="Reaching Start Times")
 tree.column("# 3", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 3", text="Trial?")
+tree.heading("# 3", text="Reaching Stop Times")
 tree.column("# 4", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 4", text="Num Reaches")
+tree.heading("# 4 ", text="Grasp Times")
 tree.column("# 5", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 5", text="Reaching Start Times")
+tree.heading("# 5 ", text="Handedness")
 tree.column("# 6", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 6", text="Reaching Stop Times")
+tree.heading("# 6", text="Tug of War")
 tree.column("# 7", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 7 ", text="Handedness")
-tree.column("# 8", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 8", text="Tug of War")
-
+tree.heading("# 7", text="Notes")
 # Vertical scrollbar for tree
 treeScroll = ttk.Scrollbar(root)
 treeScroll.configure(command=tree.yview)
@@ -221,7 +214,7 @@ load_btn.pack(side='left')
 load_csv_btn = tk.Button(root, text="Load CSV", command=load_trial_data)
 load_csv_btn.pack(side='left')
 
-update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data())
+update_button = tk.Button(root, text="Update Record", command=save_edits_trial_data)
 update_button.pack()
 
 # define video player
