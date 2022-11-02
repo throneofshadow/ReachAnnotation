@@ -70,7 +70,7 @@ class TEdit(ttk.Treeview):
             selected_text = selected_values.get("text")
         else:
             selected_text = selected_values.get("values")[column_index]
-        if column_index >= 2:
+        if column_index >= 1:
             # Cell binding box -- find width and size of the box
             column_box = self.bbox(selected_id, column)
 
@@ -89,8 +89,6 @@ class TEdit(ttk.Treeview):
             entry_edit.bind("<Return>", self.on_enter_pressed)
 
             entry_edit.place(x=column_box[0], y=column_box[1], w=column_box[2], h=column_box[3])
-        elif column_index == 1:
-            seek(int(float(selected_text)))
 
     def on_enter_pressed(self, event):
         new_text = event.widget.get()
@@ -155,17 +153,17 @@ root.title("Tkinter media")
 tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7"), show='headings', height=5)
 
 tree.column("# 1", anchor=CENTER, width=70)
-tree.heading("# 1", text="Trial Number")
+tree.heading("# 1", text="Reach #")
 tree.column("# 2", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 2", text="Reaching Start Times")
+tree.heading("# 2", text="Start Times")
 tree.column("# 3", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 3", text="Reaching Stop Times")
+tree.heading("# 3", text="Stop Times")
 tree.column("# 4", anchor=CENTER, stretch=NO, width=70)
 tree.heading("# 4 ", text="Grasp Times")
 tree.column("# 5", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 5 ", text="Handedness")
+tree.heading("# 5 ", text="Hand Used")
 tree.column("# 6", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 6", text="Tug of War")
+tree.heading("# 6", text="Tug of War?")
 tree.column("# 7", anchor=CENTER, stretch=NO, width=70)
 tree.heading("# 7", text="Notes")
 # Vertical scrollbar for tree
@@ -184,8 +182,8 @@ play_pause_btn = tk.Button(root, text="Play", command=play_pause)
 play_pause_btn.pack()
 
 # Add button for skipping +- 5 frame intervals
-skip_plus_5sec = tk.Button(root, text="Skip -5 sec", command=lambda: skip(-5))
-skip_plus_5sec.pack(side="left")
+#skip_plus_5sec = tk.Button(root, text="Skip -5 sec", command=lambda: skip(-5))
+#skip_plus_5sec.pack(side="left")
 
 # add button for time
 start_time = tk.Label(root, text=str(datetime.timedelta(seconds=0)))
@@ -204,8 +202,8 @@ vid_player.bind("<<Duration>>", update_duration)
 vid_player.bind("<<SecondChanged>>", update_scale)
 vid_player.bind("<<Ended>>", video_ended)
 
-skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
-skip_plus_5sec.pack(side="left")
+#skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
+#skip_plus_5sec.pack(side="left")
 
 # Load Video Button
 load_btn = tk.Button(root, text="Load", command=load_video)

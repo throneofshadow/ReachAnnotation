@@ -114,7 +114,7 @@ class ReachAnnotation(tk.Label):
             stream = self._container.streams.video[0]
 
             try:
-                self._video_info["framerate"] = 30
+                self._video_info["framerate"] = 10
 
             except TypeError:
                 raise TypeError("Not a video file")
