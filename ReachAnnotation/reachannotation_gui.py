@@ -8,7 +8,6 @@ from PIL import ImageTk, Image, ImageOps
 from typing import Tuple, Dict
 import pdb
 
-
 logging.getLogger('libav').setLevel(logging.ERROR)  # removes warning: deprecated pixel format used
 
 
@@ -32,7 +31,7 @@ class ReachAnnotation(tk.Label):
         self._current_frame_Tk = None
         self._frame_number = 0
         self._time_stamp = 0
-
+        self.maxframe = None
         self._current_frame_size = (0, 0)
 
         self._seek = False
@@ -95,7 +94,7 @@ class ReachAnnotation(tk.Label):
         """ sets frame size to avoid unexpected resizing """
 
         self._video_info["framesize"] = (
-        self._container.streams.video[0].width, self._container.streams.video[0].height)
+            self._container.streams.video[0].width, self._container.streams.video[0].height)
 
         self.current_imgtk = ImageTk.PhotoImage(Image.new("RGBA", self._video_info["framesize"], (255, 0, 0, 0)))
         self.config(width=150, height=100, image=self.current_imgtk)
@@ -104,6 +103,7 @@ class ReachAnnotation(tk.Label):
         """ load's file from a thread """
 
         current_thread = threading.current_thread()
+
         with av.open(path) as self._container:
 
             self._container.streams.video[0].thread_type = "AUTO"
@@ -112,7 +112,8 @@ class ReachAnnotation(tk.Label):
             self._container.discard_corrupt = True
 
             stream = self._container.streams.video[0]
-
+            self.maxframe = int(stream.frames)
+            pdb.set_trace()
             try:
                 self._video_info["framerate"] = 10
 
@@ -120,10 +121,7 @@ class ReachAnnotation(tk.Label):
                 raise TypeError("Not a video file")
 
             try:
-                self.num_frames = stream.frames
-                #self._video_info["duration"] = float(stream.duration * stream.time_base)
-                self._video_info["duration"] = float(stream.frames)
-
+                self._video_info["duration"] = float(stream.duration * stream.time_base)
                 self.event_generate("<<Duration>>")  # duration has been found
 
             except (TypeError, tk.TclError):  # the video duration cannot be found, this can happen for mkv files
@@ -148,12 +146,10 @@ class ReachAnnotation(tk.Label):
 
             while self._load_thread == current_thread and not self._stop:
                 if self._seek:  # seek to specific second
-                    seek_time = int((self._seek_sec / self._video_info['framerate']) * 1000000)
-                    self._container.seek(seek_time, whence='time',
-                                         backward=True,
+                    self._container.seek(self._seek_sec * 1000000, whence='time', backward=True,
                                          any_frame=False)  # the seek time is given in av.time_base, the multiplication is to correct the frame
                     self._seek = False
-                    self._frame_number = self._seek_sec
+                    self._frame_number = self._video_info["framerate"] * self._seek_sec
 
                     self._seek_sec = 0
 
@@ -169,11 +165,11 @@ class ReachAnnotation(tk.Label):
                 try:
                     frame = next(self._container.decode(video=0))
 
+                    self._time_stamp = float(frame.pts * stream.time_base)
+
                     self._current_img = frame.to_image()
 
                     self._frame_number += 1
-
-                    self._time_stamp = self._frame_number
 
                     self.event_generate("<<FrameGenerated>>")
 
@@ -236,7 +232,6 @@ class ReachAnnotation(tk.Label):
         """ returns metadata if available """
         if self._container:
             return self._container.metadata
-
         return {}
 
     def current_frame_number(self) -> int:
@@ -245,7 +240,10 @@ class ReachAnnotation(tk.Label):
 
     def current_duration(self) -> float:
         """ returns current playing duration in sec """
-        return self._frame_number
+        return self._time_stamp
+
+    def get_max_frames(self) -> int:
+        return self.maxframe
 
     def current_img(self) -> Image:
         """ returns current frame image """
@@ -283,26 +281,20 @@ class ReachAnnotation(tk.Label):
         self._seek_sec = frame
 
     # def seek_to_video(self, sec:int, start_frame):
-        # self.seek=True
-        # self._seek_sec = start_frame
+    # self.seek=True
+    # self._seek_sec = start_frame
 
     # def create_dropdown(self...)
-        # do stuff to ex
-        # OS MENU (filepath)
-        # tkinter.dropdown fileselect -> path_object
-        # Take path object -> display contents
+    # do stuff to ex
+    # OS MENU (filepath)
+    # tkinter.dropdown fileselect -> path_object
+    # Take path object -> display contents
 
     # def create_list_window(self..)
-        # display contents of .csv file found in dropdown
+    # display contents of .csv file found in dropdown
 
     # def action_dropdown(self, window):
-        # if self.window_action:
-        # do stuff aka select trial
+    # if self.window_action:
+    # do stuff aka select trial
 
     # def load_dropdown(self...)
-
-    # dropdown or list : .csv file containing trial start/stop
-    # 1 543 900
-    # Brett: Make individual trial videos,
-    # Make entire session videos, skip from trial to trial
-    # Select trial from dropdown, it automatically seeks to that timeframe
