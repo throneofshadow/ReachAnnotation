@@ -198,6 +198,17 @@ progress_slider.pack(side="left", fill="x", expand=True)
 end_time = tk.Label(root, text=str(datetime.timedelta(seconds=0)))
 end_time.pack(side="left")
 
+# Text Box
+text_box = Text(root, width = 40, height = 16)
+text_box.pack(side="right")
+
+Description = "◘ Number Reaches -- # of attempted reaches by the rat" \
+              "                           ◘ Reach Start -- Moment (in frames) denoting when the rat attempts to reach" \
+              "     ◘ Reach Stop -- Moment (in frames) where the reaching behavior stops (when robot resets or when hand retracts from workspace" \
+              "                                    ◘ Grasp Times -- # of times the handle is grasped during a reach attempt" \
+              "        ◘ Handedness -- The hand used to attempt the reach (Left, Right, Both)" \
+              "          ◘ Tug of War -- When reach is attempted, does the rat attempt to pull the lever against the robot reset (0 or 1)"
+
 vid_player.bind("<<Duration>>", update_duration)
 vid_player.bind("<<SecondChanged>>", update_scale)
 vid_player.bind("<<Ended>>", video_ended)
@@ -221,6 +232,6 @@ update_button.pack()
 # add method for saving outputs in right side
 
 # add method for selecting behavior w/ mouse input
-
+text_box.insert(tk.END, Description)
 
 root.mainloop()
