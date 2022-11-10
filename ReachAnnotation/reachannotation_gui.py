@@ -113,7 +113,6 @@ class ReachAnnotation(tk.Label):
 
             stream = self._container.streams.video[0]
             self.maxframe = int(stream.frames)
-            pdb.set_trace()
             try:
                 self._video_info["framerate"] = 10
 
