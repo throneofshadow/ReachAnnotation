@@ -228,7 +228,14 @@ update_button.pack()
 
 # define video player
 
+##
+# Annotation Classes
 
+# How to annotate each class
+
+
+
+##
 # add method for saving outputs in right side
 
 # add method for selecting behavior w/ mouse input
