@@ -25,12 +25,12 @@ def update_scale(event):
 
 def seek(value):
     """ used to seek a specific timeframe """
-    vid_player.seek(int(value))
+    vid_player.seek(int(value))  # Frames per second
 
 
 def skip(value: int):
     """ skip seconds """
-    vid_player.seek(int(progress_slider.get()) + value)
+    vid_player.seek(int(progress_slider.get()) + value)  # Seek in seconds
     progress_value.set(progress_slider.get() + value)
 
 
@@ -110,10 +110,6 @@ class TEdit(ttk.Treeview):
         event.widget.destroy()
 
 
-def seek_trial_value(trial_val):
-    seek(trial_val)
-
-
 def pack_tree_with_csv(csv_data):
     for index, data in csv_data.iterrows():
         tree.insert('', 'end', text='1', values=(str(data[0]), str(data[1]), str(data[2]),
@@ -180,10 +176,6 @@ vid_player.pack(expand=True, fill="both")
 # Add button for playing/pausing video
 play_pause_btn = tk.Button(root, text="Play", command=play_pause)
 play_pause_btn.pack()
-
-# Add button for skipping +- 5 frame intervals
-#skip_plus_5sec = tk.Button(root, text="Skip -5 sec", command=lambda: skip(-5))
-#skip_plus_5sec.pack(side="left")
 
 # add button for time
 start_time = tk.Label(root, text=str(datetime.timedelta(seconds=0)))

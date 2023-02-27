@@ -31,15 +31,15 @@ class ReachAnnotation(tk.Label):
         self._current_frame_Tk = None
         self._frame_number = 0
         self._time_stamp = 0
-        self.maxframe = None
+
         self._current_frame_size = (0, 0)
 
         self._seek = False
         self._seek_sec = 0
 
         self._video_info = {
-            "duration": 0,  # duration of the video, in total frames
-            "framerate": 0,  # frame rate of the video
+            "duration": 0,  # duration of the video
+            "framerate": 10,  # frame rate of the video
             "framesize": (0, 0)  # tuple containing frame height and width of the video
 
         }
@@ -66,7 +66,7 @@ class ReachAnnotation(tk.Label):
         self._keep_aspect_ratio = keep_aspect
 
     def _resize_event(self, event):
-        """ resizes video"""
+
         self._current_frame_size = event.width, event.height
 
         if self._paused and self._current_img and self.scaled:
@@ -94,7 +94,7 @@ class ReachAnnotation(tk.Label):
         """ sets frame size to avoid unexpected resizing """
 
         self._video_info["framesize"] = (
-            self._container.streams.video[0].width, self._container.streams.video[0].height)
+        self._container.streams.video[0].width, self._container.streams.video[0].height)
 
         self.current_imgtk = ImageTk.PhotoImage(Image.new("RGBA", self._video_info["framesize"], (255, 0, 0, 0)))
         self.config(width=150, height=100, image=self.current_imgtk)
@@ -112,7 +112,7 @@ class ReachAnnotation(tk.Label):
             self._container.discard_corrupt = True
 
             stream = self._container.streams.video[0]
-            self.maxframe = int(stream.frames)
+
             try:
                 self._video_info["framerate"] = 10
 
@@ -120,6 +120,7 @@ class ReachAnnotation(tk.Label):
                 raise TypeError("Not a video file")
 
             try:
+
                 self._video_info["duration"] = float(stream.duration * stream.time_base)
                 self.event_generate("<<Duration>>")  # duration has been found
 
@@ -231,6 +232,7 @@ class ReachAnnotation(tk.Label):
         """ returns metadata if available """
         if self._container:
             return self._container.metadata
+
         return {}
 
     def current_frame_number(self) -> int:
@@ -240,9 +242,6 @@ class ReachAnnotation(tk.Label):
     def current_duration(self) -> float:
         """ returns current playing duration in sec """
         return self._time_stamp
-
-    def get_max_frames(self) -> int:
-        return self.maxframe
 
     def current_img(self) -> Image:
         """ returns current frame image """
@@ -273,13 +272,13 @@ class ReachAnnotation(tk.Label):
         self.current_imgtk = ImageTk.PhotoImage(self._current_img)
         self.config(image=self.current_imgtk)
 
-    def seek(self, frame: int):
+    def seek(self, sec: int):
         """ seeks to specific time"""
 
         self._seek = True
-        self._seek_sec = frame
+        self._seek_sec = sec  # Convert from frames (number given) to seconds
 
-    # def seek_to_video(self, sec:int, start_frame):
+        # def seek_to_video(self, sec:int, start_frame):
     # self.seek=True
     # self._seek_sec = start_frame
 
