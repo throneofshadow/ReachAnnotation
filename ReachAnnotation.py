@@ -134,7 +134,7 @@ def load_trial_data():
 def save_edits_trial_data():
     save_address = tk.filedialog.askopenfilename()
     row_list = []
-    columns = ['Trial', 'Reach Start Time', 'Reach Stop Time', 'Grasp Times', 'Handedness', 'Tug of War', 'Notes']
+    columns = ['Trial', 'Reach Start Time', 'Reach Stop Time', 'Grasp Times', 'Handedness','S-F', 'Tug of War', 'Notes']
     for row in tree.get_children():
         row_list.append(tree.item(row)["values"])
     treeview_df = pd.DataFrame(row_list, columns=columns)
@@ -146,7 +146,7 @@ def save_edits_trial_data():
 root = tk.Tk()
 root.title("Tkinter media")
 
-tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7"), show='headings', height=5)
+tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7", 'c8'), show='headings', height=5)
 
 tree.column("# 1", anchor=CENTER, width=70)
 tree.heading("# 1", text="Reach #")
@@ -159,9 +159,11 @@ tree.heading("# 4 ", text="Grasp Times")
 tree.column("# 5", anchor=CENTER, stretch=NO, width=70)
 tree.heading("# 5 ", text="Hand Used")
 tree.column("# 6", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 6", text="Tug of War?")
+tree.heading("# 6", text="S-F")
 tree.column("# 7", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 7", text="Notes")
+tree.heading("# 7", text="Tug of War?")
+tree.column("# 8", anchor=CENTER, stretch=NO, width=70)
+tree.heading("# 8", text="Notes")
 # Vertical scrollbar for tree
 treeScroll = ttk.Scrollbar(root)
 treeScroll.configure(command=tree.yview)
