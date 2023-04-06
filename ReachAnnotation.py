@@ -110,10 +110,10 @@ class TEdit(ttk.Treeview):
         event.widget.destroy()
 
 
-def pack_tree_with_csv(csv_data):
-    for index, data in csv_data.iterrows():
-        tree.insert('', 'end', text='1', values=(str(data[0]), str(data[1]), str(data[2]),
-                                                 str(data[3]), str(data[4]), str(data[5]), str(data[6]), str(data[7])))
+def pack_tree_with_csv(tree_data):
+    for index, data_t in tree_data.iterrows():
+        tree.insert('', 'end', text='1', values=(str(data_t[0]), str(data_t[1]), str(data_t[2]),
+                                                 str(data_t[3]), str(data_t[4]), str(data_t[5]), str(data_t[6])))
     tree.pack(side='right')
 
 
@@ -134,8 +134,7 @@ def load_trial_data():
 def save_edits_trial_data():
     save_address = tk.filedialog.askopenfilename()
     row_list = []
-    columns = ['Trial', 'Reach Start Time', 'Reach Stop Time', 'Grasdrp Times', 'Handedness', "S / F", 'Tug of War',
-               'Notes']
+    columns = ['Trial', 'Reach Start Time', 'Reach Stop Time', 'Grasp Times', 'Handedness', 'Tug of War', 'Notes']
     for row in tree.get_children():
         row_list.append(tree.item(row)["values"])
     treeview_df = pd.DataFrame(row_list, columns=columns)
@@ -147,7 +146,7 @@ def save_edits_trial_data():
 root = tk.Tk()
 root.title("Tkinter media")
 
-tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7", "c8"), show='headings', height=5)
+tree = TEdit(root, column=("c1", "c2", "c3", "c4", "c5", "c6", "c7"), show='headings', height=5)
 
 tree.column("# 1", anchor=CENTER, width=70)
 tree.heading("# 1", text="Reach #")
@@ -160,11 +159,9 @@ tree.heading("# 4 ", text="Grasp Times")
 tree.column("# 5", anchor=CENTER, stretch=NO, width=70)
 tree.heading("# 5 ", text="Hand Used")
 tree.column("# 6", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 6", text="S / F")
+tree.heading("# 6", text="Tug of War?")
 tree.column("# 7", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 7", text="Tug of War?")
-tree.column("# 8", anchor=CENTER, stretch=NO, width=70)
-tree.heading("# 8", text="Notes")
+tree.heading("# 7", text="Notes")
 # Vertical scrollbar for tree
 treeScroll = ttk.Scrollbar(root)
 treeScroll.configure(command=tree.yview)
@@ -192,7 +189,6 @@ progress_slider.pack(side="left", fill="x", expand=True)
 # Display end times at end of slider.
 end_time = tk.Label(root, text=str(datetime.timedelta(seconds=0)))
 end_time.pack(side="left")
-
 # Text Box
 text_box = Text(root, width=40, height=16)
 text_box.pack(side="right")
@@ -208,11 +204,11 @@ vid_player.bind("<<Duration>>", update_duration)
 vid_player.bind("<<SecondChanged>>", update_scale)
 vid_player.bind("<<Ended>>", video_ended)
 
-#skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
-#skip_plus_5sec.pack(side="left")
+# skip_plus_5sec = tk.Button(root, text="Skip +5 sec", command=lambda: skip(5))
+# skip_plus_5sec.pack(side="left")
 
 # Load Video Button
-load_btn = tk.Button(root, text="Load", command=load_video)
+load_btn = tk.Button(root, text="Load Video", command=load_video)
 load_btn.pack(side='left')
 
 load_csv_btn = tk.Button(root, text="Load CSV", command=load_trial_data)
@@ -227,7 +223,6 @@ update_button.pack()
 # Annotation Classes
 
 # How to annotate each class
-
 
 
 ##
